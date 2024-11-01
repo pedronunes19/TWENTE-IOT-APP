@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  iot-frontend:
+    container_name: iot-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081" 
+      - "19000:19000" 
+    volumes:
+      - .:/app 
+      - /app/node_modules 
+    environment:
+      - NODE_ENV=development
+    working_dir: /app
+    command: ["npm", "run", "web"] 
+
