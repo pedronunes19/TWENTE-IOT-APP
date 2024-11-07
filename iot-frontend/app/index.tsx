@@ -33,7 +33,7 @@ export default function App() {
 
   const manager = Platform.OS !== 'web' ? new BleManager() : null;
 
-  async function connectWithRetry(device, maxRetries = 10, timeout = 10000) {
+  async function connectWithRetry(device, maxRetries = 3, timeout = 20000) {
     let attempt = 0;
     let server = null;
   
@@ -67,8 +67,7 @@ export default function App() {
   const connectToWebBluetoothDevice = async () => {
     try {
       const device = await (navigator as any).bluetooth.requestDevice({
-        filters: [{ namePrefix: 'CPS' }],
-        optionalServices: ['0000feaa-0000-1000-8000-00805f9b34fb']
+        filters: [{ namePrefix: 'CPS' }, {services: ["0000feaa-0000-1000-8000-00805f9b34fb", "6e400001-b5a3-f393-e0a9-e50e24dcca9e"]}]
       });
       console.log("Connected to device:", device.name);
       if (device.gatt){
@@ -77,6 +76,7 @@ export default function App() {
       
       if (device.gatt.connected) {
         device.gatt.disconnect();
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
       console.log("o primeiro avião atingiu a torre");
 
@@ -84,7 +84,7 @@ export default function App() {
 
       console.log("o segundo avião atingiu a torre");
       
-      const service = await server.getPrimaryService('0000feaa-0000-1000-8000-00805f9b34fb');
+      const service = await server.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
 
       console.log("eleições presidenciais 2024");
       
